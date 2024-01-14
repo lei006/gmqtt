@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"gmqtt"
+	"github.com/lei006/gmqtt"
 
 	"github.com/panjf2000/gnet/v2"
 )
@@ -15,7 +15,7 @@ func main() {
 	var multicore bool
 
 	// Example command: go run echo.go --port 9000 --multicore=true
-	flag.IntVar(&port, "port", 9000, "--port 9000")
+	flag.IntVar(&port, "port", 1883, "--port 1883")
 	flag.BoolVar(&multicore, "multicore", false, "--multicore true")
 	flag.Parse()
 	echo := &gmqtt.EchoServer{Addr: fmt.Sprintf("tcp://:%d", port), Multicore: multicore}
