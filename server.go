@@ -31,31 +31,31 @@ func (es *EchoServer) OnTraffic(c gnet.Conn) gnet.Action {
 	return gnet.None
 }
 
-type simpleServer struct {
+type SimpleServer struct {
 	gnet.BuiltinEventEngine
 	eng          gnet.Engine
-	network      string
-	addr         string
-	multicore    bool
+	Network      string
+	Addr         string
+	Multicore    bool
 	connected    int32
 	disconnected int32
 }
 
-func (s *simpleServer) OnBoot(eng gnet.Engine) (action gnet.Action) {
+func (s *SimpleServer) OnBoot(eng gnet.Engine) (action gnet.Action) {
 	zlog.Infof("running server on %s with multi-core=%t",
-		fmt.Sprintf("%s://%s", s.network, s.addr), s.multicore)
+		fmt.Sprintf("%s://%s", s.Network, s.Addr), s.Multicore)
 	s.eng = eng
 	return
 }
 
-func (s *simpleServer) OnOpen(c gnet.Conn) (out []byte, action gnet.Action) {
+func (s *SimpleServer) OnOpen(c gnet.Conn) (out []byte, action gnet.Action) {
 	c.SetContext(new(protocol.SimpleCodec))
 	atomic.AddInt32(&s.connected, 1)
 	out = []byte("sweetness\r\n")
 	return
 }
 
-func (s *simpleServer) OnClose(c gnet.Conn, err error) (action gnet.Action) {
+func (s *SimpleServer) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 	if err != nil {
 		zlog.Infof("error occurred on connection=%s, %v\n", c.RemoteAddr().String(), err)
 	}
@@ -68,7 +68,7 @@ func (s *simpleServer) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 	return
 }
 
-func (s *simpleServer) OnTraffic(c gnet.Conn) (action gnet.Action) {
+func (s *SimpleServer) OnTraffic(c gnet.Conn) (action gnet.Action) {
 	codec := c.Context().(*protocol.SimpleCodec)
 	var packets [][]byte
 	for {
