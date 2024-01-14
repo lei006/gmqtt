@@ -3,11 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"sync"
 
 	"github.com/lei006/gmqtt"
-	"github.com/sohaha/zlsgo/zlog"
-
-	"github.com/panjf2000/gnet/v2"
 )
 
 func main() {
@@ -19,23 +17,16 @@ func main() {
 	flag.IntVar(&port, "port", 1883, "--port 1883")
 	flag.BoolVar(&multicore, "multicore", false, "--multicore=true")
 	flag.Parse()
-	ss := &gmqtt.SimpleServer{
-		Network:   "tcp",
-		Addr:      fmt.Sprintf(":%d", port),
-		Multicore: multicore,
+
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+
+	cfg := &gmqtt.ServerConfig{
+		Addr: fmt.Sprintf(":%d", port),
 	}
-	err := gnet.Run(ss, ss.Network+"://"+ss.Addr, gnet.WithMulticore(multicore))
-	zlog.Infof("server exits with error: %v", err)
 
-	/*
-		var port int
-		var multicore bool
+	gmqtt.ListenAndServer(cfg, &wg)
 
-		// Example command: go run echo.go --port 9000 --multicore=true
-		flag.IntVar(&port, "port", 1883, "--port 1883")
-		flag.BoolVar(&multicore, "multicore", false, "--multicore true")
-		flag.Parse()
-		echo := &gmqtt.EchoServer{Addr: fmt.Sprintf("tcp://:%d", port), Multicore: multicore}
-		log.Fatal(gnet.Run(echo, echo.Addr, gnet.WithMulticore(multicore)))
-	*/
+	wg.Wait()
+
 }

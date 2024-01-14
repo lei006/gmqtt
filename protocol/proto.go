@@ -6,6 +6,7 @@ import (
 	"errors"
 
 	"github.com/panjf2000/gnet/v2"
+	"github.com/sohaha/zlsgo/zlog"
 )
 
 var ErrIncompletePacket = errors.New("incomplete packet")
@@ -52,6 +53,9 @@ func (codec SimpleCodec) Encode(buf []byte) ([]byte, error) {
 func (codec *SimpleCodec) Decode(c gnet.Conn) ([]byte, error) {
 	bodyOffset := magicNumberSize + bodySize
 	buf, _ := c.Peek(bodyOffset)
+
+	zlog.Debug("buf", buf)
+
 	if len(buf) < bodyOffset {
 		return nil, ErrIncompletePacket
 	}
